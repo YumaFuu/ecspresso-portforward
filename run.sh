@@ -1,29 +1,20 @@
-profile="your-profile"
-config="ecspresso.yaml"
-cluster="your-cluster"
-family="bastion"
-host="some-rds-cluster.cluster-xxxxxxxxxxxx.ap-northeast-1.rds.amazonaws.com"
+ECSPRESSO_CONFIG=ecspresso.yaml
+RDB_HOST=rdb-cluster.cluster-xxxxxxxxx.ap-northeast-1.rds.amazonaws.com
 
-AWS_PROFILE=$profile \
-  ecspresso run --config $config \
-  --no-wait
+# --wait-untilで起動するまで待つ
+ecspresso run --config $ECSPRESSO_CONFIG --wait-until=running
 
-id=$(AWS_PROFILE=$profile aws ecs list-tasks \
-    --cluster $cluster --family $family \
-    --query taskArns[0] --output text | cut -d'/' -f3 \
-  )
-echo id: $id
+# 最新のタスクのIDを取得
+id=$(
+    ecspresso tasks --config $ECSPRESSO_CONFIG --output=json | \
+    jq -r '.containers[0].taskArn | split("/")[2]' | head -1 \
+)
 
-echo Wait until task running..
-AWS_PROFILE=$profile \
-  aws ecs wait tasks-running \
-  --cluster $cluster \
-  --tasks $id
-
-AWS_PROFILE=$profile ecspresso exec \
+# ポートフォワードする
+ecspresso exec \
   --port-forward \
   --port 3306 \
   --local-port 3306 \
-  --config $config \
-  --host $host \
+  --config $ECSPRESSO_CONFIG \
+  --host $RDB_HOST \
   --id $id
