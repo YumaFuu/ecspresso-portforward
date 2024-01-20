@@ -1,11 +1,9 @@
 # ecspresso-portforward
 
-ecspressoを使ってFargateを起動してportforwardするサンプルコード
 
-[ecspresso](https://github.com/kayac/ecspresso)
+[ecspresso](https://github.com/kayac/ecspresso) を使ってFargateを起動してportforwardするサンプルコード
 
-Taskで起動するイメージはsleepだけできればいいので次のイメージを使います
-[yumafuu/sleepy](https://github.com/YumaFuu/docker-sleepy)
+Taskで起動するイメージはsleepだけできればいいので [yumafuu/sleepy](https://github.com/YumaFuu/docker-sleepy) を使います
 
 ## IamRole
 
@@ -31,4 +29,3 @@ $ bash create-task-exec-role.sh
 ```bash
 $ bash run.sh
 ```
-# ecspresso-portforward
